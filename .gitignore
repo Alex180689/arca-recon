@@ -3,3 +3,6 @@
 *.png
 __pycache__/
 def_recon_models_bu.py
+full_reconstruction_steps.py
+main.py
+old_recon_models.py
