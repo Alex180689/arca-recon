@@ -6,11 +6,12 @@ This repository contains a specialized pipeline for reconstructing **cascade eve
 
 The reconstruction algorithm processes each event sequentially through three main phases:
 
-### 1. Vertex and Time Optimization (Pure Analytical)
+### 1. Vertex and Time Optimization (Neural Network `model.h5` + Causal Penalty)
 The first goal is to find the physical origin `(x, y, z)` and the exact time `(t)` of the neutrino interaction.
 - **Initialization**: The algorithm generates 10 random starting positions within the active detector volume.
-- **Early-Hit Causality Penalty**: For each starting position, it calculates a Negative Log-Likelihood (NLL) based on physics. Light travels at the group velocity in water. If a PMT registers a hit *before* light could physically reach it from the assumed vertex, that vertex is heavily penalized.
-- **Optimization**: No neural networks are used here. The best 3 starting points are passed to the `L-BFGS-B` local optimizer which finds the precise `(x, y, z, t)` that minimizes the non-causal early hits.
+- **Neural Network Likelihood**: For each position/time hypothesis, it uses the pre-trained `model.h5` neural network. This network evaluates the expected hit likelihoods based on geometrical features and **time residuals** (the difference between the actual hit time and the expected light arrival time from the vertex). 
+- **Causal Penalty**: An analytical penalty is added for non-causal early hits. Since light travels at the group velocity in water, any PMT registering a hit *before* light could physically reach it from the assumed vertex heavily penalizes that hypothesis.
+- **Optimization**: The best 3 starting points are passed to the `L-BFGS-B` local optimizer which finds the precise `(x, y, z, t)` that minimizes the combined Neural Network NLL and causal penalty.
 
 ### 2. Energy Estimation (Gradient Boosting Regressor)
 Once the vertex is fixed, we estimate the energy of the cascade.
