@@ -56,7 +56,7 @@ This network predicts the expected Poisson photon rate `λ` on a given PMT for a
   3. `cos_alpha` — cosine of the angle between the vertex→PMT direction and the PMT orientation
   4. `log(1 + distance)` — log-distance
 
-The network output is `log10(λ)`, so the actual rate is `λ = 10^y`. This is then scaled by the estimated energy and water attenuation: `μ_signal = λ × E × K_calibration × K_occupancy × attenuation`.
+The network output is `log10(λ)`, so the actual rate is `λ = 10^y`. This is then scaled by the estimated energy: `μ_signal = λ × E × K_eff`, where `K_eff` absorbs the calibration constant, the occupancy light scale, and the per-PMT water attenuation.
 
 **Bernoulli Likelihood**
 The total expected rate is `μ = μ_signal + K40_background`. This Poisson rate is analytically converted into the probability that the PMT fires at least once: `p_hit = 1 − e^(−μ)`. The **Bernoulli log-likelihood** is then computed across all PMTs: `LL = sum[ P_SIGNAL × log(p_hit) − (1 − P_SIGNAL) × μ ]`.
